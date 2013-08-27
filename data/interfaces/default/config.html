@@ -1,0 +1,812 @@
+<%inherit file="base.html"/>
+<%!
+	import mylar
+%>
+
+<%def name="headerIncludes()">
+	<div id="subhead_container">
+		<div id="subhead_menu">
+			<a id="menu_link_shutdown" href="shutdown">Shut Down</a>
+			<a id="menu_link_shutdown" href="restart">Restart</a>
+		</div>
+	</div>
+</%def>
+<%def name="body()">
+
+
+
+	<div id="paddingheader">
+		<h1 class="clearfix"><img src="interfaces/default/images/icon_gear.png" alt="settings"/>Settings</h1>
+	</div>
+	<form action="configUpdate" method="post" class="form" id="configUpdate">
+	
+	<div id="tabs">
+		<ul>
+                        <li><a href="#tabs-1">Information</a></li>
+			<li><a href="#tabs-2">Web Interface</a></li>
+			<li><a href="#tabs-3">Download settings</a></li>
+			<li><a href="#tabs-4">Search providers</a></li>
+			<li><a href="#tabs-5">Quality &amp; Post Processing</a></li>
+			<li><a href="#tabs-6">Advanced Settings</a></li>
+		</ul>
+
+        <div id="tabs-1">
+        <table class="configtable" summary="Information">
+            <tr>
+                <td>
+                  <fieldset>
+                  <legend>Configuration Options</legend>
+                       <div>
+                            <label><strong>Mylar Version: </strong> ${config['branch']}</br> -- ${config['br_type']}  build ${config['br_version']}.</label></br>
+                            <label><strong>Python Version :</strong> ${config['py_version']}</label></br></br>
+                            <legend>MYLAR PROGRAM OPTIONS</legend>
+                            <label><strong>Mylar Data Directory :</strong>  ${config['data_dir']}</label></br>
+                            <label><strong>Mylar Program Directory :</strong> ${config['prog_dir']}</label></br>
+                            <label><strong>Mylar Cache Directory :</strong> ${config['cache_dir']}</label></br>
+                            <label><strong>Mylar Config File :</strong>${config['config_file']}</label></br>
+
+                       </div>                       
+                   </fieldset>
+                  </td>
+                  <td>
+                   <fieldset>
+                      <legend>Bragging Rights</legend>
+                        <div>
+                            <label><strong># of Series you're watching: </strong> ${comicinfo['COUNT_COMICS']}</br></label>
+                           <label><strong># of Issues you're watching: </strong> ${comicinfo['COUNT_ISSUES']}</br></label>
+                           <label><strong># of Issues you actually have: </strong> ${comicinfo['COUNT_HAVES']}</br></label>
+                           <label><strong> ... total HD-space being used: </strong> ${comicinfo['COUNT_SIZE']}</br></label>
+                        </div>
+                   </fieldset>
+                <fieldset>
+                     <legend>Useful Information</legend>
+                        <div class="row">
+                          <label><strong>Homepage</strong></label>
+                            <div>Coming Soon...</div>
+                        </div>
+                        <div class="row">
+                          <label><strong>Forums</strong></label>
+                            <div>Coming Soon...</div>
+                        </div>
+                        <div class="row">
+                          <label><strong>Source</strong></label>
+                            <div><a href="https://github.com/evilhero/mylar/">https://github.com/evilhero/mylar/</a></div>
+                        </div>
+                        <div class="row">
+                          <label><strong>Issues</strong></label>
+                            <div><a href="https://github.com/evilhero/mylar/">https://github.com/evilhero/mylar/issues/</a></div>
+                        </div>
+                        <div class="row">
+                          <label><strong>Internet Relay Chat</strong></label>
+                              <div><a href="irc://irc.freenode.net/#mylar">#mylar on irc.freenode.net</a></div>
+                        </div>
+                </fieldset>
+                <fieldset>
+                    <legend>Branch history</legend>
+                          <label>This would be a nice place to see revision history...</label>
+                </fieldset>
+               </td>
+            </tr>
+        </table>
+        </div>
+
+	<div id="tabs-2">	
+        <table class="configtable" summary="Web Interface">
+            <tr>
+            	<td>
+            		<fieldset>
+            			<legend>Basic</legend>
+	            		<div class="row">
+	            		 	<label>HTTP Host</label>
+	            		   <input type="text" name="http_host" value="${config['http_host']}" size="30">
+	            		   <small>e.g. localhost or 0.0.0.0</small>
+	            		</div> 
+	            		<div class="row">
+	            		      <label>HTTP Port</label>
+	            		      <input type="text" name="http_port" value="${config['http_port']}" size="10">
+	            		 </div>
+	            		 <div class="row">
+	            		     <label>HTTP Username</label>
+	            		     <input type="text" name="http_username" value="${config['http_user']}" size="30">
+	            		 </div>
+	            		 
+	            		 <div class="row">
+	            		   <label>HTTP Password</label>
+	            		   <input type="password" name="http_password" value="${config['http_pass']}" size="30">
+	            		 </div>
+                                 <div class="row checkbox">
+                                    <input type="checkbox" name="launch_browser" value="1" ${config['launch_browser']} /> <label>Launch Browser on Startup</label>
+                                 </div>
+                                 <div class="row checkbox">
+                                    <input type="checkbox" name="logverbose" value="1" ${config['logverbose']} /> <label>Verbose Logging</label>
+                                    <br/><small>*Use this only when experiencing problems*</small>
+                                 </div>
+                                 <div class="row checkbox">
+                                    <input type="checkbox" name="syno_fix" value="1" ${config['syno_fix']} /> <label>Synology Fix</label>
+                                    <br/><small>*Use this if experiencing parsing problems*</small>
+                                 </div>
+                                 <div class="row checkbox">
+                                    <input type="checkbox" name="cvapifix" value="1" ${config['cvapifix']} /> <label>Comicvine URL Fix</label>
+                                    <br/><small>*Use this if CV's URL has changed*</small>
+                                 </div>
+
+
+            		 </fieldset>
+            	</td>
+                <td>          
+                    <fieldset>
+                    	<legend>Interval</legend>
+	                    <div class="row">
+	                    	<label>NZB Search Interval</label>
+	                    	<input type="text" name="nzb_search_interval" value="${config['nzb_search_interval']}" size="4">mins
+                                  <div class="row checkbox">
+                                    <input type="checkbox" name="nzb_startup_search" value="1" ${config['nzb_startup_search']} /><label>NZB Search on startup</label>
+                                  </div>
+                                  <div class="row">
+                                  <label>Search delay</label>
+                                  <input type="text" name="search_delay" value="${config['search_delay']}" size="4" />mins
+                                  </div>
+                            </div>
+
+      	                    </div>
+   	       
+     
+	                	<div class="row">
+	                    	<label>Download Scan Interval</label>
+	                    	<input type="text" name="download_scan_interval" value="${config['download_scan_interval']}" size="4">mins
+	                    </div>
+	                
+	                    <div class="row">
+	                   	 	<label>Library Scan Interval</label>
+	                    	<input type="text" name="libraryscan_interval" value="${config['libraryscan_interval']}" size="4">mins
+	                    </div>
+                               <legend>Comic Location</legend>
+                                <div>
+                                   <small class="heading"><span style="float: left; margin-right: .3em; margin-top: 4px;" class="ui-icon ui-icon-info"></span>Automatic folder creation happens BENEATH this path</small>
+                                </div>
+                                <div class="row">
+                                        <label>Comic Location Path</label>
+                                        <input type="text" name="destination_dir" value="${config['destination_dir']}" size="50">
+                                        <small>Where do you store your comics?<br/> (or where do you want me to store them)</small>
+                                        <small>e.g. /Users/name/Comics or /Volumes/share/comics</small>
+                                </div>
+
+                                <div class="row">
+                                    <label>Directory CHMOD</label>
+                                    <input type="text" name="chmod_dir" value="${config['chmod_dir']}" size="50">
+                                    <small>Permissions on created/moved directories</small>
+                                </div>
+                                <div class="row">
+                                    <label>File CHMOD</label>
+                                    <input type="text" name="chmod_file" value="${config['chmod_file']}" size="50">
+                                    <small>Permissions on created/moved directories</small>
+                                </div>
+
+	                </fieldset>
+                </td>
+            </tr>
+        </table>
+	</div>
+	
+	<div id="tabs-3">
+        <table class="configtable" summary="Download Settings">
+	    <tr>
+                <td>
+                    <fieldset>
+                         <div class="row checkbox">
+                             <input id="use_sabnzbd" type="checkbox" onclick="initConfigCheckbox($(this))"; name="use_sabnzbd" value="1" ${config['use_sabnzbd']} /><label>SABnbzd</label>
+                         </div>
+                         <div class="config">
+	                	<div class="row">
+		                    <label>SABnzbd Host:</label>
+		                    <input type="text" name="sab_host" value="${config['sab_host']}" size="30">
+		                    <small>usually http://localhost:8080</small>
+	                        </div>
+	                   	<div class="row">
+		                    <label>SABnzbd Username</label>
+		                    <input type="text" name="sab_username" value="${config['sab_user']}" size="20">
+	                    </div>	               
+	                	<div class="row">
+		                    <label>SABnzbd API:</label>
+		                    <input type="text" name="sab_apikey" value="${config['sab_api']}" size="36">
+
+	                    </div>
+	                   	<div class="row">
+		                    <label>SABnzbd Password:</label>
+		                    <input type="password" name="sab_password" value="${config['sab_pass']}" size="20">
+	                    </div>
+                                <div class="row">
+                                    <label>SABnzbd Download Directory</label>
+                                    <input type="text" name="sab_directory" value="${config['sab_directory']}" size="36" />
+                                    <small>Where your SAB downloads go... (optional)</small>
+                            </div>
+
+	                    <div class="row">
+	                        <label>SABnzbd Category:</label>
+	                        <input type="text" name="sab_category" value="${config['sab_cat']}" size="20">
+	                    </div>
+                                              <div class="row">
+                                                <label>SAB Priority</label>
+                                            <select name="sab_priority">
+                                %for prio in ['Default', 'Low', 'Normal', 'High', 'Paused']:
+                                                        <%
+                                                                if config['sab_priority'] == prio:
+                                                                        outputselect = 'selected'
+                                                                else:
+                                                                        outputselect = ''
+                                                        %>
+                                     <option value=${prio} ${outputselect}>${prio}</option>
+                                                %endfor
+                                                </select>
+                                              </div>
+
+                         </div>
+                         <div class="row checkbox">
+                             <input id="use_nzbget" type="checkbox" onclick="initConfigCheckbox($(this))"; name="use_nzbget" value="1" ${config['use_nzbget']} /><label>NZBGet</label>
+                         </div>                         
+                         <div class="config">
+                                <div class="row">
+                                    <label>NZBGet Host:</label>
+                                    <input type="text" name="nzbget_host" value="${config['nzbget_host']}" size="30">
+                                    <small>usually http://localhost</small>
+                                </div>
+                                <div class="row">
+                                    <label>NZBGet Port:</label>
+                                    <input type="text" name="nzbget_port" value="${config['nzbget_port']}" size="36">
+                                </div>
+                                <div class="row">
+                                    <label>NZBGet Username:</label>
+                                    <input type="text" name="nzbget_username" value="${config['nzbget_user']}" size="20">
+                                </div>
+                                <div class="row">
+                                    <label>NZBGet Password:</label>
+                                    <input type="password" name="nzbget_password" value="${config['nzbget_pass']}" size="20">
+                            </div>
+                            <div class="row">
+                                <label>NZBGet Category:</label>
+                                <input type="text" name="nzbget_category" value="${config['nzbget_cat']}" size="20">
+                            </div>
+                                              <div class="row">
+                                                <label>NZBGet Priority</label>
+                                            <select name="nzbget_priority">
+                                %for prio in ['Default', 'Low', 'Normal', 'High', 'Paused']:
+                                                        <%
+                                                                if config['nzbget_priority'] == prio:
+                                                                        outputselect = 'selected'
+                                                                else:
+                                                                        outputselect = ''
+                                                        %>
+                                     <option value=${prio} ${outputselect}>${prio}</option>
+                                                %endfor
+                                                </select>
+                                              </div>
+                         
+                         </div>
+                      </div>
+                    </fieldset>
+                </td>
+           
+                <td>
+                      <legend>Usenet</legend>
+                       <fieldset>
+                            <div class="row checkbox">
+                                <input id="useblackhole" type="checkbox" onclick="initConfigCheckbox($(this));" name="blackhole" value=1 ${config['use_blackhole']} /><label>Use Black Hole</label>
+                            </div>
+                            <div class="config">
+                                    <div class="row">
+                                        <label>Black Hole Directory</label>
+                                            <input type="text" name="blackhole_dir" value="${config['blackhole_dir']}" size="30">
+                                        <small>Folder your Download program watches for NZBs</small>
+                                    </div>
+                            </div>
+                       </fieldset>
+                        <fieldset>
+                            <div class="checkbox row">
+                                <label>Usenet Retention (in days)</label>
+                                <input type="text" name="usenet_retention" value="${config['usenet_retention']}" size$
+                            </div>
+                         </fieldset>
+
+                </td>
+            </tr>            
+    
+	    </table>
+	</div>
+	<div id="tabs-4">
+        <table class="configtable" summary="Search Providers">
+	    <tr>
+                <td>
+                	<fieldset>
+                		<legend>NZB.SU</legend>
+                		<div class="row checkbox">                    	
+                                    <input id="usenzbsu" type="checkbox" onclick="initConfigCheckbox($(this));" name="nzbsu" value="1" ${config['use_nzbsu']} /><label>Use NZB.su</label>
+                		</div>
+                		<div class="config">
+	                		<div class="row">
+	                		 	<label>NZB.SU API</label>
+                                                <input type="text" name="nzbsu_apikey" value="${config['nzbsu_api']}" size="36">
+                  		        </div>
+                		</div>
+                	</fieldset>
+
+                        <fieldset>
+                                <legend>DOGNZB</legend>
+                                <div class="row checkbox">
+                                     <input id="usedognzb" type="checkbox" onclick="initConfigCheckbox($(this));" name="dognzb" value="1" ${config['use_dognzb']} /><label>Use DOGnzb</label>
+                                </div>
+                                <div class="config">
+                                        <div class="row">
+                                                <label>DOGNZB API</label>
+                                                <input type="text" name="dognzb_apikey" value="${config['dognzb_api']}" size="36">
+                                         </div>
+                                </div>
+                        </fieldset>
+
+                        <fieldset>
+                                <legend>NZBX</legend>
+                                <div class="row checkbox">
+                                <input id="usenzbx" type="checkbox" onclick="initConfigCheckbox($(this));" name="nzbx" value="1" ${config['use_nzbx']} /><label>Use NZBx</label>
+                                </div>
+                        </fieldset>
+
+
+                        <fieldset>
+                                <legend>EXPERIMENTAL</legend>
+                                <div>
+                                   <small class="heading"><span style="float: left; margin-right: .3em; margin-top: 4px;" class="ui-icon ui-icon-info"></span>Note: this is an experimental search - results may be better/worse.</small>
+                                </div>
+                                <div class="row checkbox">
+                                    <input id="useexperimental" type="checkbox" onclick="initConfigCheckbox($(this));" name="experimental" value="1" ${config['use_experimental']} /><label>Use Experimental Search</label>
+                                </div>
+                        </fieldset>
+
+                </td>
+        
+                <td>
+                        <fieldset>
+                                <legend>Newznab</legend>
+                                <div class="row checkbox">
+                                    <input id="usenewznab" type="checkbox" name="newznab" onclick="initConfigCheckbox($(this));" value="1" ${config['use_newznab']} /><label>Use Newznab</label>
+                                </div>
+                                <div id="newznab_providers">
+                                    <%
+                                        newznab_number = 1
+                                    %>
+                                    %for newznab in config['extra_newznabs']:
+                                        <%
+                                            if newznab[2] == '1' or newznab[2] == 1:
+                                                newznab_enabled = "checked"
+                                            else:
+                                                newznab_enabled = ""
+                                        %>
+                                        <div class="config" id="newznab${newznab_number}">
+                                            <div class="row">
+                                                <label>Newznab Host</label>
+                                                <input type="text" name="newznab_host${newznab_number}" value="${newznab[0]}" size="30">
+                                            </div>
+                                            <div class="row">
+                                                <label>Newznab API</label>
+                                                <input type="text" name="newznab_api${newznab_number}" value="${newznab[1]}" size="36">
+                                            </div>
+                                            <div class="row checkbox">
+                                                <input id="newznab_enabled" type="checkbox" name="newznab_enabled${newznab_number}" value="1" ${newznab_enabled} /><label>Enabled</label>
+                                            </div>
+                                            <div class="row">
+                                                <input type="button" class="remove" id="newznab${newznab_number}" value="Remove ${newznab[0]}">
+                                            </div>
+                                        </div>
+                                        <%
+                                            newznab_number += 1
+                                        %>
+                                    %endfor
+                                    <input type="button" value="Add Newznab" class="add_newznab" id="add_newznab" />
+                                </div>
+                        </fieldset>
+
+                </td>
+
+            </tr>
+        </table>
+	</div>
+	<div id="tabs-5">
+        <table class="configtable" summary="Post Processing">
+            <tr>
+                <td>
+                        <fieldset>
+                                <legend>Quality</legend>
+                                <div class="row radio left clearfix">
+<input type="radio" style="vertical-align: middle; margin: 3px; margin-top: -1px;" name="preferred_quality" value="1" ${config['pref_qual_1']} /><label>cbr</label>
+<input type="radio" style="vertical-align: middle; margin: 3px; margin-top: -1px;" name="preferred_quality" value="2" ${config['pref_qual_2']} /><label>cbz</label>
+<input type="radio" style="vertical-align: middle; margin: 3px; margin-top: -1px;" name="preferred_quality" value="0" ${config['pref_qual_0']} /><label>Whichever - just get it</label>
+                                </div>
+                        </fieldset>
+                        <fieldset>
+                                <legend>Restrictions (only with Experimental ATM)</legend>
+                                <div class="row checkbox left">
+                                      <input id="use_minsize" type="checkbox" style="vertical-align: middle; margin: 3px; margin-top: -1px;" onclick="initConfigCheckbox($(this));" name="use_minsize" value="1" ${config['use_minsize']} /><label>Minimum File size<small>(MB)</small></label>
+                                </div>
+                                <div class="config">
+                                       <div class="row">
+                                           <input type="text" name="minsize" value="${config['minsize']}" size="6">
+                                       </div>
+                                </div>
+                                </div>
+                         </fieldset>
+                         <fieldset>
+                                   <div class="row checkbox left">
+                                       <input id="use_maxsize" type="checkbox" style="vertical-align: middle; margin: 3px; margin-top: -1px;" onclick="initConfigCheckbox($(this));" name="use_maxsize" value="1" ${config['use_maxsize']} /><label>Maximum File size<small>(MB)</small></label>
+                                   </div>
+                                   <div class="config">
+                                      <div class="row">
+                                         <input type="text" name="maxsize" value="${config['maxsize']}" size="6">
+                                      </div>
+                                   </div>
+                        </fieldset>
+
+               	</td>
+                <td>
+                        <fieldset>
+                                <legend>Post-Processing</legend>
+                                <div class="row checkbox left clearfix">
+                                     <input type="checkbox" name="post_processing" value="1" ${config['post_processing']} /><label>Enable Post-Processing<small> (not checked = NO post-processing/post-management)</small></label>
+                                </div>
+                                <div class="row checkbox left clearfix">
+                                     <input type="checkbox" name="enable_pre_scripts" value="1" ${config['enable_pre_scripts']} /><label>Use Extra Script BEFORE Post-Processing</label>
+                                </div>
+                                <div class="row">
+                                      <label>Pre - Script Location</label>
+                                      <input type="text" name="pre_scripts" value="${config['pre_scripts']}" size="30">
+                                      <small>enter in the absolute path to the script</small>
+                                </div>  
+                                <div class="row checkbox left clearfix">
+                                    <input type="checkbox" name="enable_extra_scripts" value="1" ${config['enable_extra_scripts']} /><label>Use Extra Script AFTER Post-Processing</label>
+                                </div>
+                                <div class="row">
+                                      <label>Extra Script Location</label>
+                                      <input type="text" name="extra_scripts" value="${config['extra_scripts']}" size="30">
+                                      <small>enter in the absolute path to the script</small>
+                                </div>                           
+                	</fieldset>
+               </td>
+            </tr>
+		</table>
+	</div>
+	<div id="tabs-6">
+        <table class="configtable" summary="Advanced Settings">
+            <tr>
+                <td>                
+                	<fieldset>
+                		<legend>Renaming options</legend>
+                                <div class="row checkbox left clearfix">
+                                     <input type="checkbox" name="rename_files" value="1" ${config['rename_files']} /><label>Rename files </label>
+                                </div>
+                		<div>
+                                     <label>*Folder Format is used only when adding new comics*</label>
+                                </div>
+                                <div class="row">
+                                     <label>Folder Format</label>
+                                     <input type="text" title="$Publisher, $Series, $Year" name="folder_format" value="${config['folder_format']}" size="43">
+                                     <small>Use: $Publisher, $Series, $Year<br />
+                                                                E.g.: $Publisher/$Series ($Year) = DC Comics/Action Comics (2011)</small>
+                                 </div>
+                                 <div class="row">
+                                    <label> File Format</label>
+                                    <input type="text" name="file_format" value="${config['file_format']}" size="43">
+                                    <%
+                                         file_options = "$Series = SeriesName\n$Year = SeriesYear\n$Issue = IssueNumber\n$VolumeY = V{SeriesYear}\n$VolumeN = V{Volume#}"
+                                    %>
+                                    <a href="#" title="${file_options}"><img src="interfaces/default/images/info32.png" height="16" alt="" /></a>
+                                    <small>Use:  $Series, $Year, $Issue<br />
+                                                                E.g.: $Series $Issue ($Year) = Animal Man 0 (2012) </small>
+                                    <small>if tag isn't available, won't create it</small>
+                                 </div>
+                      </fieldset>
+                	
+    				<fieldset>
+    					<legend>Advanced Options</legend>
+                                <div class="row checkbox">
+                                      <input id="replace_spaces" type="checkbox" onclick="initConfigCheckbox($(this));" name="replace_spaces" value="1" ${config['replace_spaces']} /><label>Replace Spaces</label>
+                                </div>
+                                                <div class="row">
+                                                <label>Format</label>
+                                                <select name="replace_char">
+                                                %for x in ['.', '_']:
+                                                        <%
+                                                                if config['replace_char'] == x:
+                                                                        outputselect = 'selected'
+                                                                else:
+                                                                        outputselect = ''
+                                                        %>
+                                                        <option value=${x} ${outputselect}>${x}</option>
+                                                %endfor
+                                                </select>
+                                                </div>
+                                                <div class="row checkbox">
+                                                   <input id="zero_level" type="checkbox" onclick="initConfigCheckbox($(this));" name="zero_level" value="1" ${config['zero_level']} /><label>Zero level Suppression</label>
+                                                </div>
+                                                <div class="row">
+                                                <label>Format</label>
+                                                <select name="zero_level_n">
+                                                %for zeros in ['none', '0x', '00x']:
+                                                        <%
+                                                                if config['zero_level_n'] == zeros:
+                                                                        outputselect = 'selected'
+                                                                else:
+                                                                        outputselect = ''
+                                                        %>
+                                                        <option value=${zeros} ${outputselect}>${zeros}</option>
+                                                %endfor
+                                                </select>
+                                                </div>
+
+                                <div class="row checkboxclearfix">
+                                   <input type="checkbox" name="lowercase_filenames" value="1" ${config['lowercase_filenames']} /><label>Lowercase the entire filename</label><br/>
+                                   <small>(will work regardless if Rename Files is enabled)</small>
+                                </div>
+
+    				</fieldset>
+    				
+				</td>
+				<td>
+					
+		        	<fieldset>
+		        		<legend>Miscellaneous</legend>
+                                        <div class="row checkbox left clearfix">
+                                                   <input type="checkbox" style="vertical-align: middle; margin: 3px; margin-top: -1px;" name="autowant_upcoming" value="1" ${config['autowant_upcoming']} /><label>Automatically Mark Upcoming Issues as Wanted</label>
+                                                   <input type="checkbox" style="vertical-align: middle; margin: 3px; margin-top: -1px;" name="autowant_all" value="1" ${config['autowant_all']} /><label>Automatically Mark All Issues as Wanted</label>
+                                                   <input type="checkbox" style="vertical-align: middle; margin: 3px; margin-top: -1px;" name="comic_cover_local" value="1" ${config['comic_cover_local']} /><label>Place cover.jpg into Comic Directory for each comic</label>
+                                                   <input type="checkbox" style="vertical-align: middle; margin: 3px; margin-top: -1px;" name="cvinfo" value="1" ${config['cvinfo']} /><label>Write cvinfo into each comic directory</label>
+
+                                        </div>
+		        	</fieldset>
+					<fieldset>
+						<legend>Interface</legend>
+						<div class="row">
+							<label>Interface</label> 
+							<select name="interface"><h3>
+							%for interface in config['interface_list']:
+								<%
+									if interface == mylar.INTERFACE:
+										selected = 'selected="selected"'
+									else:
+										selected = ''
+								%>
+								<option value="${interface}" ${selected}>${interface}</option>
+							%endfor
+							</select>
+							
+						</div>
+						<div class="row">
+							<label>Log Directory:</label>
+							<input type="text" name="log_dir" value="${config['log_dir']}" size="50">
+						</div>
+
+					</fieldset>
+                                        <h2>Notifications</h2>
+                                        <fieldset>
+                                                <h3>Prowl</h3>
+                                                <div class="row checkbox">
+                                                    <input type="checkbox" name="prowl_enabled" id="prowl" value="1" ${config['prowl_enabled']} /><label>Enable Prowl Notifications</label>
+                                                 </div>
+                                                 <div id="prowloptions">
+                                                     <div class="row">
+                                                         <label>API key</label><input type="text" name="prowl_keys" value="${config['prowl_keys']}" size="50">
+                                                     </div>
+                                                        <div class="row checkbox">
+                                                             <input type="checkbox" name="prowl_onsnatch" value="1" ${config['prowl_onsnatch']} /><label>Notify on snatch?</label>
+                                                        </div>
+                                                        <div class="row">
+                                                                <label>Priority (-2,-1,0,1 or 2):</label>
+                                                                   <input type="text" name="prowl_priority" value="${config['prowl_priority']}" size="2">
+                                                        </div>
+                                                 </div>
+                                        </fieldset>
+                     <fieldset>
+                        <h3>NotifyMyAndroid</h3>
+                        <div class="checkbox row">
+                            <input type="checkbox" name="nma_enabled" id="nma" value="1" ${config['nma_enabled']} /><label>Enable NotifyMyAndroid</label>
+                        </div>
+                        <div id="nmaoptions">
+                            <div class="row">
+                                    <div class="row checkbox">
+                                         <input type="checkbox" name="nma_onsnatch" value="1" ${config['nma_onsnatch']} /><label>Notify on snatch?</label>
+                                    </div>
+                                    <label>NotifyMyAndroid API Key</label>
+                                    <input type="text" name="nma_apikey" value="${config['nma_apikey']}" size="30">
+                                    <small>Separate multiple api keys with commas</small>
+                            </div>
+                            <div class="row">
+                            <label>Priority</label>
+                            <select name="nma_priority">
+                                        %for x in [-2,-1,0,1,2]:
+                                                <%
+                                                        if config['nma_priority'] == x:	
+                                                                nma_priority_selected = 'selected'
+                                                        else:
+                                                                nma_priority_selected = ''
+
+                                                        if x == -2:
+                                                                nma_priority_value = 'Very Low'
+                                                        elif x == -1:
+                                                                nma_priority_value = 'Moderate'
+                                                        elif x == 0:
+                                                                nma_priority_value = 'Normal'
+                                                        elif x == 1:
+                                                                nma_priority_value = 'High'
+                                                        else:
+                                                                nma_priority_value = 'Emergency'
+                                                %>
+                                <option value=${x} ${nma_priority_selected}>${nma_priority_value}</option>
+                                        %endfor
+                                </select>
+                                </div>
+                        </div>
+                     </fieldset>
+                                        
+                                        <fieldset>
+                                                 <h3>Pushover</h3>
+                                                 <div class="row checkbox">
+                                                    <input type="checkbox" name="pushover_enabled" id="pushover" value="1" ${config['pushover_enabled']} /><label>Enable Pushover Notifications</label>
+                                                 </div>
+                                                 <div id="pushoveroptions">
+                                                   <div class="row">
+                                                       <label>API key</label><input type="text" name="pushover_apikey" value="${config['pushover_apikey']}" size="50">
+                                                   </div>
+                                                   <div class="row">
+                                                       <label>User key</label><input type="text" name="pushover_userkey" value="${config['pushover_userkey']}" size="50">
+                                                   </div>
+                                                   <div class="row checkbox">
+                                                       <input type="checkbox" name="pushover_onsnatch" value="1" ${config['pushover_onsnatch']} /><label>Notify on snatch?</label>
+                                                   </div>
+                                                   <div class="row">
+                                                       <label>Priority (-2,-1,0,1 or 2):</label>
+                                                       <input type="text" name="pushover_priority" value="${config['pushover_priority']}" size="2">
+                                                   </div>
+                                                 </div>
+                                        </fieldset>            
+				</td>
+			</tr>
+        </table>
+    </div>	
+        <input type="button" value="Save Changes" onclick="doAjaxCall('configUpdate',$(this),'tabs',true);return false;" data-success="Changes saved successfully">
+        <div class="message">
+        	<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>Web Interface changes require a restart to take effect</p>
+		</div>
+
+      </form>
+ </div>
+</%def>
+
+<%def name="javascriptIncludes()">
+	<script>
+	
+	hideServerDivs = function () {
+		$("#customoptions").slideUp();
+		$("#hpserveroptions").slideUp();
+	};
+	
+	handleNewSelection = function () {
+	
+		hideServerDivs();
+		
+		switch ($(this).val()) {
+			case 'custom':
+				$("#customoptions").slideDown();
+			break;
+			case 'mylar':
+				$("#hpserveroptions").slideDown();
+			break;
+		}
+	};
+	
+	function initThisPage() 
+	
+	{
+
+                if ($("#prowl").is(":checked"))
+                        {
+                                $("#prowloptions").show();
+                        }
+                else
+                        {
+                                $("#prowloptions").hide();
+                        }
+
+                $("#prowl").click(function(){
+                        if ($("#prowl").is(":checked"))
+                        {
+                                $("#prowloptions").slideDown();
+                        }
+                        else
+                        {
+                                $("#prowloptions").slideUp();
+                        }
+                });
+
+                if ($("#nma").is(":checked"))
+                        {
+                                $("#nmaoptions").show();
+                        }
+                else
+                        {
+                                $("#nmaoptions").hide();
+                        }
+
+                $("#nma").click(function(){
+                        if ($("#nma").is(":checked"))
+                        {
+                                $("#nmaoptions").slideDown();
+                        }
+                        else
+                        {
+                                $("#nmaoptions").slideUp();
+                        }
+                });
+
+                if ($("#pushover").is(":checked"))
+                        {
+                                $("#pushoveroptions").show();
+                        }
+                else
+                        {
+                                $("#pushoveroptions").hide();
+                        }
+
+                $("#pushover").click(function(){
+                        if ($("#pushover").is(":checked"))
+                        {
+                                $("#pushoveroptions").slideDown();
+                        }
+                        else
+                        {
+                                $("#pushoveroptions").slideUp();
+                        }
+                });
+
+                var deletedNewznabs = 0;
+
+                $(".remove").click(function() {
+                    $(this).parent().parent().remove();
+                    deletedNewznabs = deletedNewznabs + 1;
+                });
+
+
+
+                $("#add_newznab").click(function() {
+                    var intId = $("#newznab_providers > div").size() + deletedNewznabs + 1;
+                    var formfields = $("<div class=\"config\" id=\"newznab" + intId + "\"><div class=\"row\"><label>Newznab Host</label><input type=\"text\" name=\"newznab_host" + intId + "\" size=\"30\"></div><div class=\"row\"><label>Newznab API</label><input type=\"text\" name=\"newznab_api" + intId + "\" size=\"36\"></div><div class=\"row\"><label>Category Mapping</label><input type=\"text\" name=\"newznab_category" + intId + "\" size=\"36\"></div><div class=\"row checkbox\"><input type=\"checkbox\" name=\"newznab_enabled" + intId + "\" value=\"1\" checked /><label>Enabled</label></div>");
+                    var removeButton = $("<div class=\"row\"><input type=\"button\" class=\"remove\" value=\"Remove\" /></div>");
+                    removeButton.click(function() {
+                        $(this).parent().remove();
+                        deletedNewznabs = deletedNewznabs + 1;
+
+                    });
+                    formfields.append(removeButton);
+                    formfields.append("</div>");
+                    $("#add_newznab").before(formfields);
+                });
+    
+		$(function() {
+			$( "#tabs" ).tabs();
+		});
+		initActions();
+                initConfigCheckbox("#launch_browser");
+                initConfigCheckbox("#use_sabnzbd");
+                initConfigCheckbox("#use_nzbget");
+                initConfigCheckbox("#useblackhole");
+                initConfigCheckbox("#usenewznab");
+		initConfigCheckbox("#usenzbsu");
+                initConfigCheckbox("#usedognzb");
+		initConfigCheckbox("#useexperimental");
+		initConfigCheckbox("#useraw");
+                initConfigCheckbox("#replace_spaces");
+                initConfigCheckbox("#use_minsize");
+                initConfigCheckbox("#use_maxsize");
+                initConfigCheckbox("#zero_level");
+	}
+	$(document).ready(function() {
+		initThisPage();
+	});
+	
+	</script>
+</%def>
